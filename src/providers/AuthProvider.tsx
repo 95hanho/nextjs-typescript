@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { authContext } from "@/context/authContext";
 import { F_ENDPOINTS } from "@/api/endpoints";
-import { get_normal } from "@/api/apiFilter";
+import { get_normal } from "@/api/fetchFilter";
 import { Me } from "@/types/auth";
 
 /* 인증관련 설정 */

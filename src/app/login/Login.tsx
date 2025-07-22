@@ -8,7 +8,7 @@ import useAuth from "@/hooks/context/useAuth";
 import { LoginData } from "@/types/auth";
 import { F_ENDPOINTS } from "@/api/endpoints";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { post_json } from "@/api/apiFilter";
+import { post_json } from "@/api/fetchFilter";
 
 const LoginMain = styled.div`
 	padding: 30px;
