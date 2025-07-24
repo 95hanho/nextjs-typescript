@@ -12,19 +12,18 @@ export function generateAccessToken(payload: object) {
 		expiresIn: ACCESS_TOKEN_EXPIRES_IN,
 	});
 }
-
 // refreshToken 생성
 export function generateRefreshToken(payload: object) {
 	return jwt.sign(payload, JWT_SECRET, {
 		expiresIn: REFRESH_TOKEN_EXPIRES_IN,
 	});
 }
-
 // middleware는 Edge Runtime에서 동작 => nodejs환경 jsonwebtoken이 작동안함.
 export function verifyToken(token: string): Token {
 	return jwt.verify(token, JWT_SECRET) as Token; // 실패 시 오류 발생
 }
 
+// middleware 환경에서의 토큰 복호화
 export async function middleware_verifyToken(token: string): Promise<Token> {
 	try {
 		const { payload } = await jwtVerify(token, secret);
