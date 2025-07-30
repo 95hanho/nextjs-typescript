@@ -1,6 +1,6 @@
 // src/middleware.ts or /middleware.ts
 import { NextRequest, NextResponse } from "next/server";
-import { middleware_verifyToken, verifyToken } from "./libs/jwt";
+import { middleware_verifyToken } from "./libs/jwt";
 import { addLogoutQuery } from "./libs/auth";
 
 // async function logoutRedirect(req: NextRequest) {
@@ -10,8 +10,59 @@ import { addLogoutQuery } from "./libs/auth";
 // 	return response;
 // }
 
-const protectedPaths = ["/profile", "/dashboard", "/admin"]; // 로그인 필요한 경로들
-const authRequiredPaths = ["/board"];
+// const protectedPaths = ["/profile", "/dashboard", "/admin"]; // 로그인 필요한 경로들
+const authRequiredPaths = ["/board", "/notice", "/api/board"];
+
+const handleAuthCheck = (req: NextRequest, isApi: boolean) => {
+	// ------- 로그인 인증이 필요한 url
+	console.log("로그인 인증이 필요한 url");
+
+	const rToken = req.headers.get("refreshToken") || req.cookies.get("refreshToken")?.value;
+	const aToken = req.headers.get("accessToken") || req.cookies.get("accessToken")?.value;
+	// const rToken = req.cookies.get("refreshToken");
+	if (!rToken) {
+		console.error("no rToken ===> 로그아웃 쿼리 추가하여서 리다이렉트");
+		// 로그아웃 쿼리 추가하여서 리다이렉트
+		const logoutUrl = addLogoutQuery(req.url);
+		return isApi
+			? new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+					status: 401,
+					headers: { "Content-Type": "application/json" },
+			  })
+			: NextResponse.redirect(new URL(logoutUrl, req.url));
+	}
+	console.log("rToken", rToken);
+	try {
+		if (aToken) {
+			console.log("aToken", aToken);
+			middleware_verifyToken(aToken); // 복호화 성공(토큰유효)하면 그대로 진행
+			console.log("토큰이 유효");
+			return NextResponse.next();
+		}
+	} catch {
+		// 로그아웃 쿼리 추가하여서 리다이렉트
+		console.error("aToken decode error");
+		const logoutUrl = addLogoutQuery(req.url);
+		return isApi
+			? new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+					status: 401,
+					headers: { "Content-Type": "application/json" },
+			  })
+			: NextResponse.redirect(new URL(logoutUrl, req.url));
+	}
+	try {
+		// accessToken이 없거나 유효하지 않은 경우 -> refreshToken으로 재발급 시도
+		console.log("토큰 재발급 url로");
+		// req.url에서 '/api/auth/token'요청을 한다라는 뜻 원래 url은 따로 던져야함.
+		return NextResponse.redirect(new URL(`/api/auth/token?returnTo=${encodeURIComponent(req.url)}`, req.url));
+	} catch {
+		console.error("토큰 재발급 과정에서 오류 !!!");
+		console.error("토큰 재발급 과정에서 오류 !!!");
+		console.error("토큰 재발급 과정에서 오류 !!!");
+		return NextResponse.next(); // 어떻게 처리할지 생각해봐야할듯
+		// return NextResponse.redirect("");
+	}
+};
 
 // middleware는 Edge Runtime에서 동작
 export async function middleware(req: NextRequest) {
@@ -21,48 +72,19 @@ export async function middleware(req: NextRequest) {
 	// 이미 로그아웃이면 아무것도 안함.
 	if (searchParams.get("logout") === "1") return NextResponse.next();
 
+	console.log("middleware ---------------------------------------------------------------------------------------------------");
 	console.log("url :", req.url, ", method :", req.method, ", req.nextUrl.pathname :", req.nextUrl.pathname);
-	// 로그인 url은 그냥 통과
-	if (req.nextUrl.pathname === "/api/auth" && req.method === "POST") return NextResponse.next();
 
-	console.log("middleware ---------------------------------");
+	// return NextResponse.next();
 
 	const needsAuth = authRequiredPaths.some((v) => req.nextUrl.pathname.startsWith(v));
 	if (!needsAuth) return NextResponse.next();
 
-	// ------- 로그인 인증이 필요한 url
+	const isApi = req.nextUrl.pathname.startsWith("/api");
+	if (isApi) console.log("API요청 ====================>");
+	else console.log("페이지이동 요청 ====================>");
 
-	const aToken = req.cookies.get("accessToken");
-	try {
-		if (aToken) {
-			middleware_verifyToken(aToken.value); // 복호화 성공(토큰유효)하면 그대로 진행
-			console.log("토큰이 유효");
-			return NextResponse.next();
-		}
-	} catch {
-		// 로그아웃 쿼리 추가하여서 리다이렉트
-		console.error("aToken decode error");
-		const logoutUrl = addLogoutQuery(req.url);
-		return NextResponse.redirect(new URL(logoutUrl, req.url));
-	}
-
-	// accessToken이 없거나 유효하지 않은 경우 -> refreshToken으로 재발급 시도
-	const rToken = req.cookies.get("refreshToken");
-	console.log("rToken", rToken);
-	if (!rToken) {
-		console.error("로그아웃 쿼리 추가하여서 리다이렉트");
-		// 로그아웃 쿼리 추가하여서 리다이렉트
-		const logoutUrl = addLogoutQuery(req.url);
-		return NextResponse.redirect(new URL(logoutUrl, req.url));
-	} else {
-		console.log("토큰 재발급 url로");
-		// req.url에서 '/api/auth/token'요청을 한다라는 뜻 원래 url은 따로 던져야함.
-		return NextResponse.redirect(new URL(`/api/auth/token?returnTo=${encodeURIComponent(req.url)}`, req.url));
-	}
-
-	// if (!accessToken && req.nextUrl.pathname.startsWith("/dashboard")) {
-	// 	return NextResponse.redirect(new URL("/login", req.url));
-	// }
+	return handleAuthCheck(req, isApi);
 }
 
 export const config = {
