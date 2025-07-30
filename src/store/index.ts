@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import loding from "@/reducers/lodingSlice";
+import loding from "reducers/lodingSlice";
 
 const rootReducer = combineReducers({ loding });
 

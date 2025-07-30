@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Nav from "./Nav";
-import AppProvider from "@/providers/AppProvider";
+import AppProvider from "providers/AppProvider";
 import Head from "next/head";
+import "@css/style.css";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -22,9 +23,9 @@ export const viewport: Viewport = {
 // 사이트맵에 대하여
 // robots.txt vs meta name="robots" 차이
 export const metadata: Metadata = {
-	title: "리액트 기본 세팅", // 브라우저 탭 제목 및 og:title, twitter:title 등에 반영됨
-	description: "리액트 세팅", // 검색엔진 및 소셜미디어 공유 시 요약 설명
-	applicationName: "리액트 세팅", // 웹앱 이름 (예: 안드로이드 홈화면 앱 추가시 이름)
+	title: "Next.js 기본 세팅", // 브라우저 탭 제목 및 og:title, twitter:title 등에 반영됨
+	description: "Next.js 세팅", // 검색엔진 및 소셜미디어 공유 시 요약 설명
+	applicationName: "Next.js 세팅", // 웹앱 이름 (예: 안드로이드 홈화면 앱 추가시 이름)
 	generator: "Next.js", // 페이지 생성 툴 정보
 	keywords: ["React", "Next.js", "default", "세팅", "힌호성"], // 검색엔진이 참고할 수 있는 키워드들
 	referrer: "origin-when-cross-origin", // 외부 링크 클릭 시 리퍼러 정보 보내줄지 말지 설정
@@ -52,14 +53,14 @@ export const metadata: Metadata = {
 	},
 	// iOS 홈화면 추가 시 동작 정의
 	appleWebApp: {
-		title: "리액트 세팅", // (예 : IOS제품 홈화면 앱 추가시 이름)
+		title: "Next.js 세팅", // (예 : IOS제품 홈화면 앱 추가시 이름)
 		capable: true, // 모바일에서 전체화면으로 보이게 할 지 여부(위 아래 주소창과 인터넷 메뉴들이 보암)
 		statusBarStyle: "default", // 상태 표시줄 배경 색상 설정
 	},
 	// Open Graph (페이스북, 카카오 등 공유시 사용됨)
 	openGraph: {
-		// title: "리액트 세팅", // 설정안하면 기본title 따라감(fallback:대체).
-		// description: "리액트 세팅", // 설정안하면 기본description 따라감(fallback:대체).
+		// title: "Next.js 세팅", // 설정안하면 기본title 따라감(fallback:대체).
+		// description: "Next.js 세팅", // 설정안하면 기본description 따라감(fallback:대체).
 		url: "https://test", // og:url
 		siteName: "엑스퍼트컨설팅 2025 HR FAIR", // og:site_name
 		images: [
@@ -67,7 +68,7 @@ export const metadata: Metadata = {
 				url: "https://test.jpg", // og:image
 				width: 800,
 				height: 600,
-				alt: "리액트 세팅", // 이미지 대체 텍스트
+				alt: "Next.js 세팅", // 이미지 대체 텍스트
 			},
 		],
 		locale: "ko_KR", // 언어 및 지역
@@ -75,8 +76,8 @@ export const metadata: Metadata = {
 	},
 	twitter: {
 		card: "summary", // 트위터 카드 타입 (summary, summary_large_image 등)
-		// title: "리액트 세팅", // 설정안하면 기본title 따라감(fallback:대체).
-		// description: "리액트 세팅", // 설정안하면 기본description 따라감(fallback:대체).
+		// title: "Next.js 세팅", // 설정안하면 기본title 따라감(fallback:대체).
+		// description: "Next.js 세팅", // 설정안하면 기본description 따라감(fallback:대체).
 		images: ["https://test.jpg"], // twitter:image
 		creator: "@yourhandle", // 작성자 트위터 핸들 (필요시)
 	},

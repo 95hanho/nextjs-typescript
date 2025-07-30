@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { authContext } from "@/context/authContext";
-import { AuthContextType } from "@/types/auth";
+import { authContext } from "context/authContext";
+import { AuthContextType } from "types/auth";
 
 /* 인증컨텍스트 훅으로 가져오기 */
 export default function useAuth(): AuthContextType {

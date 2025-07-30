@@ -1,4 +1,4 @@
-import { Token } from "@/types/auth";
+import { Token } from "types/auth";
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from "./tokenTime";
 import { jwtVerify } from "jose";

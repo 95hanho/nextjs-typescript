@@ -1,8 +1,8 @@
-import { post_urlFormData } from "@/api/fetchFilter";
-import { B_ENDPOINT } from "@/api/endpoints";
-import { addLogoutQuery } from "@/libs/auth";
-import { generateAccessToken, generateRefreshToken, verifyToken } from "@/libs/jwt";
-import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE } from "@/libs/tokenTime";
+import { post_urlFormData } from "api/fetchFilter";
+import { B_ENDPOINT } from "api/endpoints";
+import { addLogoutQuery } from "libs/auth";
+import { generateAccessToken, generateRefreshToken, verifyToken } from "libs/jwt";
+import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE } from "libs/tokenTime";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(요청: NextApiRequest, 응답: NextApiResponse) {

@@ -4,11 +4,11 @@
 // import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import useAuth from "@/hooks/context/useAuth";
-import { LoginData } from "@/types/auth";
-import { F_ENDPOINTS } from "@/api/endpoints";
+import useAuth from "hooks/context/useAuth";
+import { LoginData } from "types/auth";
+import { F_ENDPOINTS } from "api/endpoints";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { post_json } from "@/api/fetchFilter";
+import { post_json } from "api/fetchFilter";
 
 const LoginMain = styled.div`
 	padding: 30px;
@@ -18,7 +18,8 @@ export default function Login() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
-	const message = searchParams?.get("message");
+	const message = searchParams?.get("message") || "";
+	const redirectUrl = searchParams?.get("redirect") || "/";
 	console.log("message", message);
 	console.log("pathname", pathname);
 
@@ -32,12 +33,13 @@ export default function Login() {
 	const login_before = async (e: React.FormEvent) => {
 		console.log("login_before");
 		e.preventDefault();
-		const res = await post_json(F_ENDPOINTS.TEST_USER, user);
+		const res = await post_json(F_ENDPOINTS.TEST_USER_LOGIN, user);
 		const data = await res.json();
 
 		if (res.ok) {
 			set_loginOn(true);
-			router.push("/");
+			if(!redirectUrl) router.replace("/");
+			else router.replace(redirectUrl);
 		} else {
 			alert(data.msg);
 		}

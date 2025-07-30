@@ -2,17 +2,17 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { authContext } from "@/context/authContext";
-import { F_ENDPOINTS } from "@/api/endpoints";
-import { get_normal } from "@/api/fetchFilter";
-import { Me } from "@/types/auth";
+import { authContext } from "context/authContext";
+import { F_ENDPOINTS } from "api/endpoints";
+import { get_normal } from "api/fetchFilter";
+import { Me } from "types/auth";
 
 /* 인증관련 설정 */
 export default function AuthProvider({ children }: Readonly<{ children: React.ReactNode }>) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-	const logoutOn = searchParams?.get("logout") == "1";
+	const logoutOn = useMemo(() => searchParams?.get("logout") == "1", [searchParams]);
 	const curUrl = useMemo(() => {
 		const queryString = !searchParams ? "" : `?${searchParams.toString()}`;
 		return pathname + queryString;
@@ -46,13 +46,16 @@ export default function AuthProvider({ children }: Readonly<{ children: React.Re
 
 	useEffect(() => {
 		if (logoutOn && pathname) {
-			if (loginOn) {
-				alert("로그아웃 되었습니다.");
+			if (loginOn) alert("로그아웃 되었습니다. ==> authProvider");
+			else alert("로그인이 필요한 페이지 입니다.");
+			if (searchParams) {
+				const newParams = new URLSearchParams(searchParams.toString());
+				newParams.delete("logout");
+				const newUrl = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
+				console.log("newUrl", newUrl);
+				// router.replace(newUrl);
+				router.replace(`/login?redirect=${encodeURIComponent(newUrl)}`);
 			}
-			const newParams = new URLSearchParams(searchParams.toString());
-			newParams.delete("logout");
-			const newUrl = newParams.toString() ? `${pathname}?${newParams.toString()}` : pathname;
-			router.replace(newUrl);
 		}
 	}, [loginOn, logoutOn, pathname, router, searchParams]);
 
